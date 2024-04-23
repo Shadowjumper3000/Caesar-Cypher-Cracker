@@ -9,11 +9,13 @@ The Caesar cipher is a substitution cipher where each letter in the plaintext is
 The cracker works as follows:
 
 1. The encrypted text is provided as input.
-2. The cracker analyzes the frequency of letters in the encrypted text.
-3. It compares the frequency of letters to the frequency of letters in the English language.
-4. The cracker calculates the shift value based on the difference in frequencies.
-5. It applies the calculated shift value to decrypt the text.
-6. The decrypted text is displayed as output.
+2. It goes through every possible shift.
+3. The cracker analyzes the frequency of letters in the encrypted text.
+4. It compares the frequency of letters to the frequency of letters in the English language.
+5. It weighs common words of the english language.
+6. The cracker calculates the shift value based on the difference in frequencies.
+7. It applies the calculated shift value to decrypt the text.
+8. The decrypted text is displayed as output.
 
 ## Usage
 
