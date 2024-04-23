@@ -135,12 +135,9 @@ int main() {
     char choice;
     do {
         char language[100];
-        printf("Enter the suspected language of the message\nEnglish, German, Spanish supported(case sensitive!!): ");
+        printf("Enter the suspected language of the message\nEnglish, German, Spanish supported: ");
         fgets(language, sizeof(language), stdin);
         language[strcspn(language, "\n")] = '\0';
-        for (int i = 0; language[i] != '\0'; i++) {
-            language[i] = (char)tolower(language[i]);
-        }
 
         // Read frequency distribution and common words
         read_frequency_distribution(language);
