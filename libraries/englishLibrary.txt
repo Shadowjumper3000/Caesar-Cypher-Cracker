@@ -380,7 +380,6 @@ best
 hour
 better
 true
-.
 during
 hundred
 am
