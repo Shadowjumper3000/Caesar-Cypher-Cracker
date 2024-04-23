@@ -2,10 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
 #define ALPHABET_SIZE 26
 #define MAX_COMMON_WORDS 500
 #define INT_MAX 2147483647
+
+#define VERBOSE 1
 
 // English letter frequency distribution
 float letter_frequency[ALPHABET_SIZE];
@@ -48,21 +51,36 @@ int calculate_score(char *text, float *freq) {
     // Score based on letter frequency difference
     int i;
     for (i = 0; i < ALPHABET_SIZE; ++i) {
-        score += (abs((int)freq[i] - (int)encrypted_frequencies[i]));
+        score -= (int)(1000 * fabs(freq[i] - encrypted_frequencies[i]));
     }
 
     // Score based on common word occurrence
+    char *lowercase_text = strdup(text);
+    for (i = 0; lowercase_text[i]; ++i) {
+        lowercase_text[i] = (char)tolower((unsigned char)lowercase_text[i]);
+    }
+
     for (i = 0; i < MAX_COMMON_WORDS && common_words[i] != NULL; ++i) {
-        if (strstr(text, common_words[i]) != NULL) {
+        if (strstr(lowercase_text, common_words[i]) != NULL) {
             score -= 10; // Decrease score for each occurrence of a common word
         }
     }
+
+    free(lowercase_text);
 
     return score;
 }
 
 // Function to crack Caesar cipher
 void crack_caesar(char *ciphertext, float *freq, int *shift_scores) {
+    if(VERBOSE) {
+        printf("Cracking Caesar cipher...\n");
+        printf("frequencies: ");
+        for (int i = 0; i < ALPHABET_SIZE; ++i) {
+            printf("%.2f ", freq[i]);
+        }
+        printf("\n");
+    }
     // Try each shift from 1 to 25
     int shift;
     for (shift = 1; shift <= 25; ++shift) {
@@ -71,6 +89,10 @@ void crack_caesar(char *ciphertext, float *freq, int *shift_scores) {
         decrypt_caesar(shifted_text, shift);
         int score = calculate_score(shifted_text, freq);
         shift_scores[shift - 1] = score;
+
+        if (VERBOSE) {
+            printf("Shift %d: Score %d\n", shift - 1, score);
+        }
     }
 }
 
@@ -126,6 +148,7 @@ int main() {
         ciphertext[strcspn(ciphertext, "\n")] = '\0';
 
         int shift_scores[26]; // Declare the shift_scores array with a size of 26
+
         // Crack Caesar cipher
         crack_caesar(ciphertext, letter_frequency, shift_scores);
 
@@ -134,7 +157,7 @@ int main() {
         int i;
         for (i = 1; i < 25; ++i) {
             if (shift_scores[i] < shift_scores[best_shift]) {
-            best_shift = i;
+                best_shift = i;
             }
         }
 
@@ -153,11 +176,11 @@ int main() {
             // Print all shift scores
             printf("Shift Scores:\n");
             for (i = 0; i < 25; ++i) {
-            printf("Shift %d: %d", i, shift_scores[i]);
-            char shifted_text[strlen(ciphertext) + 1];
-            strcpy(shifted_text, ciphertext);
-            decrypt_caesar(shifted_text, i);
-            printf("\t%s\n", shifted_text);
+                printf("Shift %d: %d", i, shift_scores[i]);
+                char shifted_text[strlen(ciphertext) + 1];
+                strcpy(shifted_text, ciphertext);
+                decrypt_caesar(shifted_text, i);
+                printf("\t%s\n", shifted_text);
             }
         }
 
