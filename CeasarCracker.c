@@ -51,7 +51,7 @@ int calculate_score(char *text, float *freq) {
     // Score based on letter frequency difference
     int i;
     for (i = 0; i < ALPHABET_SIZE; ++i) {
-        score += (int)(150 * fabs(freq[i] - encrypted_frequencies[i]));
+        score += (int)(100 * fabs(freq[i] - encrypted_frequencies[i]));
     }
 
     // Score based on common word occurrence
@@ -62,7 +62,7 @@ int calculate_score(char *text, float *freq) {
 
     for (i = 0; i < MAX_COMMON_WORDS && common_words[i] != NULL; ++i) {
         if (strstr(lowercase_text, common_words[i]) != NULL) {
-            score -= 50; // Decrease score for each occurrence of a common word
+            score += 50; // Decrease score for each occurrence of a common word
         }
     }
 
@@ -98,19 +98,14 @@ void crack_caesar(char *ciphertext, float *freq, int *shift_scores) {
 
 // Function to read frequency distribution from a file
 void read_frequency_distribution(char *language) {
-    int j;
-    for (j = 0; j < MAX_COMMON_WORDS && common_words[j] != NULL; ++j) {
-        free(common_words[j]);
-    }
 
     char filename[100];
     sprintf(filename, "libraries/%sLibrary.txt", language);
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
-        printf("%s Language not supported\n", language);
         return;
     } else {
-        printf("%s Language supported\n", language);
+        printf("%s Language supported\n\n", language);
     }
 
     char line[100];
@@ -140,7 +135,7 @@ int main() {
     char choice;
     do {
         char language[100];
-        printf("Enter the language (e.g., english, german): ");
+        printf("Enter the suspected language of the message\nEnglish, German, Spanish supported(case sensitive!!): ");
         fgets(language, sizeof(language), stdin);
         language[strcspn(language, "\n")] = '\0';
         for (int i = 0; language[i] != '\0'; i++) {
@@ -157,6 +152,10 @@ int main() {
 
         int shift_scores[26]; // Declare the shift_scores array with a size of 26
 
+        // Make a copy of the original ciphertext
+        char original_ciphertext[strlen(ciphertext) + 1];
+        strcpy(original_ciphertext, ciphertext);
+
         // Crack Caesar cipher
         crack_caesar(ciphertext, letter_frequency, shift_scores);
 
@@ -164,33 +163,39 @@ int main() {
         int best_shift = 0;
         int i;
         for (i = 0; i < 25; ++i) {
-            if (shift_scores[i] < shift_scores[best_shift]) {
+            if (shift_scores[i] > shift_scores[best_shift]) {
                 best_shift = i;
             }
         }
 
-        // Decrypt ciphertext with the best shift
-        decrypt_caesar(ciphertext, best_shift + 1);
-        printf("Best shift: %d\n", best_shift + 1);
-        printf("Decrypted message: %s\n", ciphertext);
+        // Create an array to keep track of tried shifts
+        int tried_shifts[25] = {0};
 
-        // Ask if decryption seems correct
-        printf("Does the decryption seem correct? (Y/N): ");
-        scanf(" %c", &choice);
-        while ((getchar()) != '\n');
+        // Try to decrypt the ciphertext with the best shift
+        int current_shift = best_shift;
+        do {
+            char decrypted_text[strlen(ciphertext) + 1];
+            strcpy(decrypted_text, original_ciphertext);
+            decrypt_caesar(decrypted_text, current_shift + 1);
+            printf("\nShift %d: %s\n\n", current_shift + 1, decrypted_text);
 
-        // If decryption is incorrect, try the next most likely shift
-        if (choice == 'N' || choice == 'n') {
-            // Print all shift scores
-            printf("Shift Scores:\n");
-            for (i = 0; i < 25; ++i) {
-                printf("Shift %d: %d", i, shift_scores[i]);
-                char shifted_text[strlen(ciphertext) + 1];
-                strcpy(shifted_text, ciphertext);
-                decrypt_caesar(shifted_text, i);
-                printf("\t%s\n", shifted_text);
+            // Ask if decryption seems correct
+            printf("Does the decryption seem correct? (Y/N): ");
+            scanf(" %c", &choice);
+            while ((getchar()) != '\n');
+
+            // If decryption is incorrect, find the next best shift
+            if (choice == 'N' || choice == 'n') {
+                tried_shifts[current_shift] = 1;
+                int max_score = -1;
+                for (i = 0; i < 25; ++i) {
+                    if (!tried_shifts[i] && shift_scores[i] > max_score) {
+                        max_score = shift_scores[i];
+                        current_shift = i;
+                    }
+                }
             }
-        }
+        } while (choice == 'N' || choice == 'n');
 
         // Free memory allocated for common words
         int j;
