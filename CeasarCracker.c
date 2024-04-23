@@ -109,26 +109,37 @@ void read_common_english_words() {
 }
 
 int main() {
-    char ciphertext[100];
-    printf("Enter the ciphertext: ");
-    fgets(ciphertext, sizeof(ciphertext), stdin);
-    ciphertext[strcspn(ciphertext, "\n")] = '\0';
+    char choice;
+    do
+    {
+        char ciphertext[100];
+        printf("Enter the ciphertext: ");
+        fgets(ciphertext, sizeof(ciphertext), stdin);
+        ciphertext[strcspn(ciphertext, "\n")] = '\0';
 
-    // Read common English words
-    read_common_english_words();
+        // Read common English words
+        read_common_english_words();
 
-    // Crack Caesar cipher
-    int best_shift = crack_caesar(ciphertext);
+        // Crack Caesar cipher
+        int best_shift = crack_caesar(ciphertext);
 
-    // Decrypt ciphertext with the best shift
-    decrypt_caesar(ciphertext, best_shift);
-    printf("Decrypted message: %s\n", ciphertext);
+        // Decrypt ciphertext with the best shift
+        decrypt_caesar(ciphertext, best_shift);
+        printf("Best shift: %d\n", best_shift);
+        printf("Decrypted message: %s\n", ciphertext);
 
-    // Free memory allocated for common words
-    int i;
-    for (i = 0; i < MAX_COMMON_WORDS && common_words[i] != NULL; i++) {
-        free(common_words[i]);
-    }
+        // Free memory allocated for common words
+        int i;
+        for (i = 0; i < MAX_COMMON_WORDS && common_words[i] != NULL; i++) {
+            free(common_words[i]);
+        }
 
+        printf("Do you want to continue? (Y/N): ");
+        scanf(" %c", &choice);
+        while ((getchar()) != '\n');
+
+
+    } while (choice == 'Y' || choice == 'y');
+    
     return 0;
 }
