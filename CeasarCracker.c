@@ -6,10 +6,9 @@
 #define ALPHABET_SIZE 26
 #define MAX_COMMON_WORDS 500
 #define INT_MAX 2147483647
-#define FILENAME "englishLibrary.txt"
 
 // English letter frequency distribution
-float english_letter_frequency[ALPHABET_SIZE];
+float letter_frequency[ALPHABET_SIZE];
 
 // Common English words
 char *common_words[MAX_COMMON_WORDS];
@@ -84,21 +83,25 @@ int crack_caesar(char *ciphertext, float *freq) {
 }
 
 // Function to read frequency distribution from a file
-void read_frequency_distribution() {
-    FILE *file = fopen(FILENAME, "r");
+void read_frequency_distribution(char *language) {
+    char filename[100];
+    sprintf(filename, "libraries/%sLibrary.txt", language);
+    FILE *file = fopen(filename, "r");
     if (file == NULL) {
-        printf("Error opening file: %s\n", FILENAME);
+        printf("%s Language not supported\n", language);
         return;
+    } else {
+        printf("%s Language supported\n", language);
     }
 
     char line[100];
     int i = 0;
     while (fgets(line, sizeof(line), file) != NULL && i < ALPHABET_SIZE) {
-        english_letter_frequency[i] = (float)atof(line);
+        letter_frequency[i] = (float)atof(line);
         i++;
     }
 
-    // Read common English words
+    // Read common words
     char word[100];
     i = 0;
     while (fgets(word, sizeof(word), file) != NULL && i < MAX_COMMON_WORDS) {
@@ -114,16 +117,24 @@ void read_frequency_distribution() {
 int main() {
     char choice;
     do {
+        char language[100];
+        printf("Enter the language (e.g., english, german): ");
+        fgets(language, sizeof(language), stdin);
+        language[strcspn(language, "\n")] = '\0';
+        for (int i = 0; language[i] != '\0'; i++) {
+            language[i] = (char)tolower(language[i]);
+        }
+
+        // Read frequency distribution and common words
+        read_frequency_distribution(language);
+
         char ciphertext[100];
         printf("Enter the ciphertext: ");
         fgets(ciphertext, sizeof(ciphertext), stdin);
         ciphertext[strcspn(ciphertext, "\n")] = '\0';
 
-        // Read frequency distribution and common English words
-        read_frequency_distribution();
-
         // Crack Caesar cipher
-        int best_shift = crack_caesar(ciphertext, english_letter_frequency);
+        int best_shift = crack_caesar(ciphertext, letter_frequency);
 
         // Decrypt ciphertext with the best shift
         decrypt_caesar(ciphertext, best_shift);
