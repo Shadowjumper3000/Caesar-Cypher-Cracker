@@ -8,7 +8,7 @@
 #define MAX_COMMON_WORDS 500
 #define INT_MAX 2147483647
 
-#define VERBOSE 1
+#define VERBOSE 0
 
 // English letter frequency distribution
 float letter_frequency[ALPHABET_SIZE];
@@ -51,7 +51,7 @@ int calculate_score(char *text, float *freq) {
     // Score based on letter frequency difference
     int i;
     for (i = 0; i < ALPHABET_SIZE; ++i) {
-        score += (int)(100 * fabs(freq[i] - encrypted_frequencies[i]));
+        score += (int)(150 * fabs(freq[i] - encrypted_frequencies[i]));
     }
 
     // Score based on common word occurrence
@@ -98,6 +98,11 @@ void crack_caesar(char *ciphertext, float *freq, int *shift_scores) {
 
 // Function to read frequency distribution from a file
 void read_frequency_distribution(char *language) {
+    int j;
+    for (j = 0; j < MAX_COMMON_WORDS && common_words[j] != NULL; ++j) {
+        free(common_words[j]);
+    }
+
     char filename[100];
     sprintf(filename, "libraries/%sLibrary.txt", language);
     FILE *file = fopen(filename, "r");
