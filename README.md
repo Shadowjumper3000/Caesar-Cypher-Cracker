@@ -1,34 +1,23 @@
 # Caesar Cipher Cracker
 
-This is a simple Caesar cipher cracker implemented in C. It uses a combination of word detection and common letter weighting to crack passwords encrypted with a Caesar cipher.
+This is a Caesar Cipher program implemented in C. It provides encryption, decryption, and cracking capabilities. The program works by using common words of the language as well as letter weighting to score possible shifts and return the correct encryption.
 
 ## How it Works
 
-The Caesar cipher is a substitution cipher where each letter in the plaintext is shifted a certain number of positions down the alphabet. This cracker attempts to find the correct shift value by analyzing the frequency of letters in the encrypted text and comparing it to the frequency of letters in the English language.
-
-The cracker works as follows:
-
-1. The encrypted text is provided as input.
-2. It goes through every possible shift.
-3. The cracker analyzes the frequency of letters in the encrypted text.
-4. It compares the frequency of letters to the frequency of letters in the English language.
-5. It weighs common words of the english language.
-6. The cracker calculates the shift value based on the difference in frequencies.
-7. It applies the calculated shift value to decrypt the text.
-8. The decrypted text is displayed as output.
+1. **Encryption**: The program takes a plaintext and a shift value as input and provides the encrypted text as output.
+2. **Decryption**: The program takes an encrypted text and a shift value as input and provides the decrypted text as output.
+3. **Cracking**: The program takes an encrypted text as input. It then goes through every possible shift, calculates a score for each shift based on the frequency of letters and occurrence of common words, and provides the decrypted text with the highest score as output.
 
 ## Usage
 
-To use the Caesar cipher cracker, follow these steps:
+To use the Caesar Cipher program, follow these steps:
 
-1. Compile the C program using a C compiler.
-2. Run the compiled program.
-3. Enter the encrypted text when prompted.
-4. The cracker will attempt to decrypt the text and display the result.
-
-## Limitations
-
-Please note that this is a simple Caesar cipher cracker and may not be able to crack complex or heavily encrypted passwords. It relies on word detection and common letter weighting, which may not always yield accurate results.
+1. Download the source code.
+2. Compile the C program using a C compiler.
+3. Run the compiled program.
+4. Choose the operation you want to perform (encryption, decryption, or cracking) when prompted.
+5. Enter the required inputs when prompted.
+6. The program will perform the operation and display the result.
 
 ## Contributing
 
