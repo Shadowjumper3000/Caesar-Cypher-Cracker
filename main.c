@@ -3,6 +3,11 @@
 
 #include "handler.h"
 
+void clear_input_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+}
+
 int encrypt() {
     char plaintext[100];
     printf("Enter the Plain Text: ");

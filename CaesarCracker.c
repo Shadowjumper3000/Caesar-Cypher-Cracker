@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <math.h>
 
+#include "handler.h"
+
 #define ALPHABET_SIZE 26
 #define MAX_COMMON_WORDS 500
 #define INT_MAX 2147483647
