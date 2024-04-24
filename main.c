@@ -57,7 +57,7 @@ int main() {
     int repeat = 1;
 
     do {
-        printf("Caesar Cipher Menu\n");
+        printf("\nCaesar Cipher Menu\n");
         printf("1. Encrypt\n");
         printf("2. Decrypt\n");
         printf("3. Crack\n");

@@ -94,7 +94,7 @@ int calculate_score(char *text, float *freq) {
 int crack_caesar(char *ciphertext, float *freq, int *shift_scores) {
     if(VERBOSE) {
         printf("Cracking Caesar cipher...\n");
-        printf("frequencies: ");
+        printf("Frequencies: ");
         for (int i = 0; i < ALPHABET_SIZE; ++i) {
             printf("%.2f ", freq[i]);
         }
@@ -174,7 +174,7 @@ int crack() {
     read_frequency_distribution(language);
 
     char ciphertext[100];
-    printf("Enter the ciphertext: ");
+    printf("Enter the Ciphertext: ");
     fgets(ciphertext, sizeof(ciphertext), stdin);
     ciphertext[strcspn(ciphertext, "\n")] = '\0';
 
