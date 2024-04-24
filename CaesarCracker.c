@@ -7,10 +7,8 @@
 #include "handler.h"
 
 #define ALPHABET_SIZE 26
-#define MAX_COMMON_WORDS 500
+#define MAX_COMMON_WORDS 550
 #define INT_MAX 2147483647
-
-#define VERBOSE 1
 
 // English letter frequency distribution
 float letter_frequency[ALPHABET_SIZE];
@@ -20,6 +18,10 @@ char *common_words[MAX_COMMON_WORDS];
 
 // Function to decrypt Caesar cipher
 int decrypt_caesar(char *ciphertext, int shift) {
+    if(VERBOSE) {
+        printf("En/De-crypting %s cipher with shift %d...\n", ciphertext, shift);
+    }
+    
     int i;
     for (i = 0; ciphertext[i] != '\0'; ++i) {
         if (isalpha(ciphertext[i])) {
@@ -32,6 +34,10 @@ int decrypt_caesar(char *ciphertext, int shift) {
 
 // Function to calculate letter frequencies
 int calculate_letter_frequencies(char *text, float *freq) {
+    if(VERBOSE) {
+        printf("Calculating letter frequencies...\n");
+    }
+
     int i;
     int total_letters = 0;
     for (i = 0; text[i] != '\0'; ++i) {
@@ -48,6 +54,10 @@ int calculate_letter_frequencies(char *text, float *freq) {
 
 // Function to calculate score for a shift
 int calculate_score(char *text, float *freq) {
+    if(VERBOSE) {
+        printf("Calculating score...\n");
+    }
+
     int score = 0;
     float encrypted_frequencies[ALPHABET_SIZE] = {0};
     calculate_letter_frequencies(text, encrypted_frequencies);
@@ -57,17 +67,22 @@ int calculate_score(char *text, float *freq) {
     for (i = 0; i < ALPHABET_SIZE; ++i) {
         score += (int)(100 * fabs(freq[i] - encrypted_frequencies[i]));
     }
-
+        
     // Score based on common word occurrence
     char *lowercase_text = strdup(text);
     for (i = 0; lowercase_text[i]; ++i) {
         lowercase_text[i] = (char)tolower((unsigned char)lowercase_text[i]);
     }
 
-    for (i = 0; i < MAX_COMMON_WORDS && common_words[i] != NULL; ++i) {
-        if (strstr(lowercase_text, common_words[i]) != NULL) {
-            score += 50; // Decrease score for each occurrence of a common word
+    char *token = strtok(lowercase_text, " ");
+    while (token != NULL) {
+        for (i = 0; i < MAX_COMMON_WORDS && common_words[i] != NULL; ++i) {
+            if (strcmp(token, common_words[i]) == 0) {
+                score += 80;
+                break;
+            }
         }
+        token = strtok(NULL, " ");
     }
 
     free(lowercase_text);
@@ -85,6 +100,7 @@ int crack_caesar(char *ciphertext, float *freq, int *shift_scores) {
         }
         printf("\n");
     }
+
     // Try each shift from 1 to 25
     int shift;
     for (shift = 0; shift < 25; ++shift) {
@@ -103,6 +119,9 @@ int crack_caesar(char *ciphertext, float *freq, int *shift_scores) {
 
 // Function to read frequency distribution from a file
 int read_frequency_distribution(char *language) {
+    if(VERBOSE) {
+        printf("Reading frequency distribution...\n");
+    }
 
     char filename[100];
     sprintf(filename, "libraries/%sLibrary.txt", language);
@@ -138,8 +157,14 @@ int read_frequency_distribution(char *language) {
 }
 
 int crack() {
+    if(VERBOSE) {
+        printf("Cracking...\n");
+    }
+
     char choice;
     char language[100];
+
+    clear_input_buffer();
 
     printf("Enter the suspected language of the message\nEnglish, German, Spanish supported: ");
     fgets(language, sizeof(language), stdin);
@@ -153,7 +178,7 @@ int crack() {
     fgets(ciphertext, sizeof(ciphertext), stdin);
     ciphertext[strcspn(ciphertext, "\n")] = '\0';
 
-    int shift_scores[26]; // Declare the shift_scores array with a size of 26
+    int shift_scores[26];
 
     // Make a copy of the original ciphertext
     char original_ciphertext[strlen(ciphertext) + 1];
@@ -185,7 +210,7 @@ int crack() {
         // Ask if decryption seems correct
         printf("Does the decryption seem correct? (Y/N): ");
         scanf(" %c", &choice);
-        while ((getchar()) != '\n');
+        clear_input_buffer();
 
         // If decryption is incorrect, find the next best shift
         if (choice == 'N' || choice == 'n') {
