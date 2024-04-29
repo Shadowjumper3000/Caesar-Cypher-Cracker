@@ -205,6 +205,7 @@ int crack() {
         char decrypted_text[strlen(ciphertext) + 1];
         strcpy(decrypted_text, original_ciphertext);
         decrypt_caesar(decrypted_text, current_shift + 1);
+        printf("-----------------------------\n");
         printf("\nShift %d: %s\n\n", current_shift + 1, decrypted_text);
 
         // Ask if decryption seems correct

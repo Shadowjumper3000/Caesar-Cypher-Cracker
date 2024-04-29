@@ -25,6 +25,7 @@ int encrypt() {
     }
 
     decrypt_caesar(plaintext, -shift);
+    printf("-----------------------------\n");
     printf("Ciphertext: %s\n", plaintext);
     clear_input_buffer();
     return 0;
@@ -47,6 +48,7 @@ int decrypt() {
     }
 
     decrypt_caesar(ciphertext, shift);
+    printf("-----------------------------\n");
     printf("Plaintext: %s\n", ciphertext);
     clear_input_buffer();
     return 0;
@@ -57,12 +59,13 @@ int main() {
     int repeat = 1;
 
     do {
+        printf("\n----------------------\n");
         printf("\nCaesar Cipher Menu\n");
         printf("1. Encrypt\n");
         printf("2. Decrypt\n");
         printf("3. Crack\n");
         printf("0. Exit\n");
-        printf("Enter your choice: ");
+        printf("Enter your choice\n->");
         scanf("%d", &choice);
 
         switch (choice) {
