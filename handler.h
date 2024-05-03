@@ -13,3 +13,11 @@ int decrypt_caesar();
 void clear_input_buffer();
 
 #endif
+
+/*
+Code Cat creates compilable code.
+    /\__/\
+   /__OwO_\
+    /    \
+    \u__u/
+*/

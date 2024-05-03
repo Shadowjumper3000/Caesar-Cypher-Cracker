@@ -100,3 +100,11 @@ int main() {
 
     return 0;
 }
+
+/*
+Code Cat creates compilable code.
+    /\__/\
+   /__OwO_\
+    /    \
+    \u__u/
+*/

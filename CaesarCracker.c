@@ -8,7 +8,6 @@
 
 #define ALPHABET_SIZE 26
 #define MAX_COMMON_WORDS 550
-#define INT_MAX 2147483647
 
 // English letter frequency distribution
 float letter_frequency[ALPHABET_SIZE];
@@ -234,3 +233,11 @@ int crack() {
 
     return 0;
 }
+
+/*
+Code Cat creates compilable code.
+    /\__/\
+   /__OwO_\
+    /    \
+    \u__u/
+*/

@@ -32,3 +32,10 @@ while IFS= read -r line; do
 done < "$input_file"
 
 echo "Modified file saved as '$output_file'"
+
+
+# Code Cat creates compilable code.
+#     /\__/\
+#    /__OwO_\
+#     /    \
+#     \u__u/
