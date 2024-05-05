@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <dirent.h>
 
 #include "handler.h"
 
@@ -130,6 +131,7 @@ int read_frequency_distribution(char *language) {
     } else {
         printf("%s Language supported\n\n", language);
     }
+    printf("-----------------------------\n");
 
     char line[100];
     int i = 0;
@@ -151,7 +153,12 @@ int read_frequency_distribution(char *language) {
         i++;
     }
 
-    fclose(file);
+    if (fclose(file) != 0 && VERBOSE) {
+        printf("Error closing file.\n");
+    } else if(VERBOSE) {
+        printf("File closed.\n");
+    }
+
     return 0;
 }
 
@@ -165,18 +172,64 @@ int crack() {
 
     clear_input_buffer();
 
-    printf("Enter the suspected language of the message\nEnglish, German, Spanish supported: ");
+    printf("Enter the suspected language of the message\n");
+    printf("Supported languages include:\n");
+
+    // Scan the libraries folder and list all supported languages
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir("libraries");
+    if (dir != NULL) {
+        while ((entry = readdir(dir)) != NULL) {
+            if (entry->d_type == DT_REG) {
+                char *filename = entry->d_name;
+                char *suffix = strstr(filename, "Library");
+                if (suffix != NULL) {
+                    *suffix = '\0';
+                }
+                printf("%s\n", filename);
+            }
+        }
+        closedir(dir);
+    } else {
+        printf("Error opening libraries folder\n");
+    }
+    printf("->");
+
     fgets(language, sizeof(language), stdin);
+
+    // Convert language to lowercase
+    int l;
+    for (l = 0; language[l] != '\0'; ++l) {
+        language[l] = (char)tolower(language[l]);
+    }
+
     language[strcspn(language, "\n")] = '\0';
 
     // Read frequency distribution and common words
     read_frequency_distribution(language);
 
-    char ciphertext[100];
-    printf("Enter the Ciphertext: ");
-    fgets(ciphertext, sizeof(ciphertext), stdin);
-    ciphertext[strcspn(ciphertext, "\n")] = '\0';
+    char ciphertext[1000];
 
+    if (getInputType() == 1) {
+        printf("Enter the ciphertext: ");
+        fgets(ciphertext, sizeof(ciphertext), stdin);
+        ciphertext[strcspn(ciphertext, "\n")] = '\0';
+    } else {
+        char filename[100];
+        printf("Enter the filename: ");
+        fgets(filename, sizeof(filename), stdin);
+        filename[strcspn(filename, "\n")] = '\0';
+        FILE *file = fopen(filename, "r");
+        if (file == NULL) {
+            printf("Error opening file!\n");
+            return 1;
+        }
+        fgets(ciphertext, sizeof(ciphertext), file);
+        fclose(file);
+    }
+    
     int shift_scores[26];
 
     // Make a copy of the original ciphertext

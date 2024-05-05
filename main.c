@@ -1,19 +1,45 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "handler.h"
 
 void clear_input_buffer() {
+    if (VERBOSE) {
+        printf("Clearing input buffer\n");
+    }
+    
     int c;
     while ((c = getchar()) != '\n' && c != EOF) {}
+    fflush(stdin);
 }
 
 int encrypt() {
-    char plaintext[100];
-    printf("Enter the Plain Text: ");
-    clear_input_buffer();
-    fgets(plaintext, sizeof(plaintext), stdin);
-    plaintext[strcspn(plaintext, "\n")] = '\0';
+    char plaintext[1000];
+    
+    if (getInputType() == 1) {
+        printf("Enter the plaintext: ");
+        fgets(plaintext, sizeof(plaintext), stdin);
+        plaintext[strcspn(plaintext, "\n")] = '\0';
+    } else {
+        char filename[100];
+        printf("Enter the filename: ");
+        fgets(filename, sizeof(filename), stdin);
+
+        int l;
+        for (l = 0; filename[l] != '\0'; ++l) {
+            filename[l] = (char)tolower(filename[l]);
+        }
+
+        filename[strcspn(filename, "\n")] = '\0';
+        FILE *file = fopen(filename, "r");
+        if (file == NULL) {
+            printf("Error opening file!\n");
+            return 1;
+        }
+        fgets(plaintext, sizeof(plaintext), file);
+        fclose(file);
+    }
 
     int shift;
     printf("Enter the shift value: ");
@@ -32,11 +58,30 @@ int encrypt() {
 }
 
 int decrypt() {
-    char ciphertext[100];
-    printf("Enter the ciphertext: ");
-    clear_input_buffer();
-    fgets(ciphertext, sizeof(ciphertext), stdin);
-    ciphertext[strcspn(ciphertext, "\n")] = '\0';
+    char ciphertext[1000];
+    if (getInputType() == 1) {
+        printf("Enter the ciphertext: ");
+        fgets(ciphertext, sizeof(ciphertext), stdin);
+        ciphertext[strcspn(ciphertext, "\n")] = '\0';
+    } else {
+        char filename[100];
+        printf("Enter the filename: ");
+        fgets(filename, sizeof(filename), stdin);
+        
+        int l;
+        for (l = 0; filename[l] != '\0'; ++l) {
+            filename[l] = (char)tolower(filename[l]);
+        }
+
+        filename[strcspn(filename, "\n")] = '\0';
+        FILE *file = fopen(filename, "r");
+        if (file == NULL) {
+            printf("Error opening file!\n");
+            return 1;
+        }
+        fgets(ciphertext, sizeof(ciphertext), file);
+        fclose(file);
+    }
 
     int shift;
     printf("Enter the shift value: ");
@@ -54,12 +99,33 @@ int decrypt() {
     return 0;
 }
 
+int getInputType() {
+    if (VERBOSE) {
+        printf("Getting input type\n");
+    }
+    
+    int choice;
+    printf("Input type\n");
+    printf("1. Text\n");
+    printf("2. File\n");
+    printf("Enter your choice\n->");
+    scanf(" %d", &choice);
+    if (choice == 1 || choice == 2) {
+        printf("-----------------------------\n");
+        clear_input_buffer();
+        return choice;
+    } else {
+        printf("Invalid choice!\n");
+        return getInputType();
+    }
+}
+
 int main() {
     int choice;
     int repeat = 1;
 
     do {
-        printf("\n----------------------\n");
+        printf("\n-----------------------------\n");
         printf("\nCaesar Cipher Menu\n");
         printf("1. Encrypt\n");
         printf("2. Decrypt\n");
@@ -67,7 +133,7 @@ int main() {
         printf("0. Exit\n");
         printf("Enter your choice\n->");
         scanf("%d", &choice);
-
+        printf("\n-----------------------------\n");
         switch (choice) {
             case 0:
                 printf("Exiting...\n");

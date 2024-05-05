@@ -1,7 +1,7 @@
 #ifndef HANDLER_H
 #define HANDLER_H
 
-#define VERBOSE 0
+#define VERBOSE 1
 
 //Caeasar Cracker
 int crack();
@@ -11,6 +11,9 @@ int decrypt_caesar();
 
 //Clear Buffer
 void clear_input_buffer();
+
+//Get Input Type
+int getInputType();
 
 #endif
 
