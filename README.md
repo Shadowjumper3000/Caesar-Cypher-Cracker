@@ -4,9 +4,9 @@ This is a Caesar Cipher program implemented in C. It provides encryption, decryp
 
 ## How it Works
 
-1. **Encryption**: The program takes a plaintext and a shift value as input and provides the encrypted text as output.
-2. **Decryption**: The program takes an encrypted text and a shift value as input and provides the decrypted text as output.
-3. **Cracking**: The program takes an encrypted text as input. It then goes through every possible shift, calculates a score for each shift based on the frequency of letters and occurrence of common words, and provides the decrypted text with the highest score as output.
+1. **Encryption**: The program takes a plaintext or file with plaintext and a shift value as input and provides the encrypted text as output.
+2. **Decryption**: The program takes an encrypted text or a file with encrypted text and a shift value as input and provides the decrypted text as output.
+3. **Cracking**: The program takes an encrypted text or a file with encrypted text as input. It then goes through every possible shift, calculates a score for each shift based on the frequency of letters and occurrence of common words, and provides the decrypted text with the highest score as output.
 
 ## Usage
 
